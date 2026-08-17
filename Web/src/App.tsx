@@ -71,6 +71,16 @@ function App() {
     }
   }
 
+  function handleAddIngredient(ingredient: string) {
+    setIngredients((current) => [...current, ingredient])
+  }
+
+  function handleUpdateIngredient(index: number, ingredient: string) {
+    setIngredients((current) =>
+      current.map((item, itemIndex) => (itemIndex === index ? ingredient : item)),
+    )
+  }
+
   function handleReset() {
     setIngredients([])
     setRecipes([])
@@ -92,6 +102,8 @@ function App() {
         onModeChange={handleModeChange}
         onFileSelected={(file) => loadFridge('live', file)}
         onLoadSample={() => loadFridge('mock')}
+        onAddIngredient={handleAddIngredient}
+        onUpdateIngredient={handleUpdateIngredient}
         onGenerateRecipes={handleGenerateRecipes}
         onReset={handleReset}
       />

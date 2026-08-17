@@ -151,6 +151,35 @@
   width: 100%;
 }
 
+.add-ingredient {
+  display: flex;
+  flex: 1 1 100%;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.add-ingredient__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.625rem 0.75rem;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--text-h);
+}
+
+.add-ingredient__input::placeholder {
+  color: var(--text-muted);
+}
+
+.add-ingredient__input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-color: var(--primary);
+}
+
 /* Upload */
 
 .fridge-upload {
@@ -328,14 +357,90 @@
 }
 
 .fridge-ingredient-item {
-  padding: 0.4rem 0.65rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.4rem 0.45rem 0.4rem 0.65rem;
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text-h);
   border-bottom: 1px solid var(--border);
+}
+
+.fridge-ingredient-item:hover,
+.fridge-ingredient-item:focus-within {
+  background: var(--primary-bg);
+}
+
+.fridge-ingredient-item__label {
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.fridge-ingredient-item:hover .fridge-ingredient-item__label,
+.fridge-ingredient-item:focus-within .fridge-ingredient-item__label {
+  white-space: normal;
+  overflow: visible;
+}
+
+.fridge-ingredient-item__edit {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: -0.1rem;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.fridge-ingredient-item:hover .fridge-ingredient-item__edit,
+.fridge-ingredient-item:focus-within .fridge-ingredient-item__edit {
+  opacity: 1;
+}
+
+.fridge-ingredient-item__edit:hover,
+.fridge-ingredient-item__edit:focus-visible {
+  color: var(--primary);
+  background: var(--primary-bg-hover);
+}
+
+.fridge-ingredient-item__edit:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.fridge-ingredient-item__edit svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.fridge-ingredient-item__input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.1rem 0.25rem;
+  border: 1px solid var(--primary-border);
+  border-radius: 6px;
+  background: var(--surface);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  line-height: 1.3;
+}
+
+.fridge-ingredient-item__input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
 }
 
 .fridge-ingredient-item:last-child {

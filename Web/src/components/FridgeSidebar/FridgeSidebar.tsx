@@ -1,7 +1,9 @@
+import { useEffect, useRef, useState } from 'react'
 import { FridgeIllustration } from './FridgeIllustration'
 import { FridgeUpload } from './FridgeUpload'
 import { LoadingBar } from './LoadingBar'
 import { AnalysisModeToggle } from './AnalysisModeToggle'
+import { IngredientItem } from './IngredientItem'
 import type { AnalysisMode } from '../../api/analyzeFridge'
 import './FridgeSidebar.css'
 
@@ -14,6 +16,8 @@ type FridgeSidebarProps = {
   onModeChange: (mode: AnalysisMode) => void
   onFileSelected: (file: File) => void
   onLoadSample: () => void
+  onAddIngredient: (ingredient: string) => void
+  onUpdateIngredient: (index: number, ingredient: string) => void
   onGenerateRecipes: () => void
   onReset: () => void
 }
@@ -27,12 +31,46 @@ export function FridgeSidebar({
   onModeChange,
   onFileSelected,
   onLoadSample,
+  onAddIngredient,
+  onUpdateIngredient,
   onGenerateRecipes,
   onReset,
 }: FridgeSidebarProps) {
+  const [isAdding, setIsAdding] = useState(false)
+  const [draft, setDraft] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
   const ingredientCount = ingredients.length
   const hasIngredients = ingredientCount > 0
   const isBusy = isAnalyzing || isGenerating
+
+  useEffect(() => {
+    if (isAdding) {
+      inputRef.current?.focus()
+    }
+  }, [isAdding])
+
+  useEffect(() => {
+    if (isAdding) {
+      listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
+    }
+  }, [ingredientCount, isAdding])
+
+  function handleAddSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    const nextIngredient = draft.trim()
+    if (!nextIngredient) {
+      return
+    }
+    onAddIngredient(nextIngredient)
+    setDraft('')
+    inputRef.current?.focus()
+  }
+
+  function handleCancelAdd() {
+    setIsAdding(false)
+    setDraft('')
+  }
 
   return (
     <section className="fridge-panel" aria-label="Your fridge">
@@ -43,11 +81,18 @@ export function FridgeSidebar({
         {isAnalyzing ? (
           <LoadingBar label={mode === 'live' ? 'Analyzing fridge…' : 'Loading sample…'} />
         ) : hasIngredients ? (
-          <ul className="fridge-ingredient-list" aria-label="Ingredients in your fridge">
+          <ul
+            ref={listRef}
+            className="fridge-ingredient-list"
+            aria-label="Ingredients in your fridge"
+          >
             {ingredients.map((name, index) => (
-              <li key={`${index}-${name}`} className="fridge-ingredient-item">
-                {name}
-              </li>
+              <IngredientItem
+                key={`${index}-${name}`}
+                name={name}
+                disabled={isBusy}
+                onSave={(next) => onUpdateIngredient(index, next)}
+              />
             ))}
           </ul>
         ) : mode === 'live' ? (
@@ -74,9 +119,35 @@ export function FridgeSidebar({
       )}
 
       <div className="fridge-panel__actions">
-        <button type="button" className="btn btn--add" disabled={!hasIngredients || isBusy}>
-          + Add ingredient
-        </button>
+        {isAdding ? (
+          <form className="add-ingredient" onSubmit={handleAddSubmit}>
+            <input
+              ref={inputRef}
+              className="add-ingredient__input"
+              type="text"
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              placeholder="e.g. 2 tomatoes"
+              aria-label="New ingredient"
+              disabled={isBusy}
+            />
+            <button type="submit" className="btn btn--add" disabled={isBusy || !draft.trim()}>
+              Add
+            </button>
+            <button type="button" className="btn btn--generate" onClick={handleCancelAdd} disabled={isBusy}>
+              Cancel
+            </button>
+          </form>
+        ) : (
+          <button
+            type="button"
+            className="btn btn--add"
+            disabled={isBusy}
+            onClick={() => setIsAdding(true)}
+          >
+            + Add ingredient
+          </button>
+        )}
         <button
           type="button"
           className="btn btn--generate"
