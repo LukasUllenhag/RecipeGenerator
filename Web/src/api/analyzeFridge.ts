@@ -1,6 +1,8 @@
 export type Recipe = {
   title: string
   description: string
+  cookTime: string
+  steps: string[]
 }
 
 export type FridgeAnalysis = {

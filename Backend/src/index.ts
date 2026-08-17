@@ -4,7 +4,7 @@ import { serve } from "@hono/node-server"
 import { generateText, Output } from "ai"
 import { openai } from "@ai-sdk/openai"
 import { fridgeAnalysisSchema, recipesResponseSchema } from "./schema"
-import { delay, getPlaceholderRecipes, getSampleFridgeAnalysis } from "./placeholders"
+import { getSampleFridgeAnalysis } from "./placeholders"
 
 const VISION_PROMPT = `Look at this fridge photo.
 Return every visible food item or ingredient as its own string.
@@ -12,6 +12,12 @@ Each string must include an estimated amount and the item name, for example "2 t
 Use a countable number when you can count the items. Otherwise use a sensible unit such as kg, g, ml, bunch, carton, or bottle.
 If you cannot estimate an amount, use "some", for example "some cheese".
 Do not include recipes, commentary, or confidence scores.`
+
+const RECIPE_PROMPT = `You are a home cook suggesting meals from a fridge.
+Create 4 practical recipes that can be cooked with the listed ingredients.
+Prefer using what is already in the fridge. Common pantry staples like salt, pepper, water, and a little oil are allowed.
+Each recipe needs a title, a short description, a cook time, and a full step-by-step cooking procedure.
+Do not invent large missing ingredients that are not in the fridge.`
 
 const app = new Hono()
 
@@ -85,14 +91,36 @@ app.post("/api/fridge", async (c) => {
 
 app.post("/api/recipes", async (c) => {
   const body = await c.req.json().catch(() => null)
-  const ingredients = Array.isArray(body?.ingredients) ? body.ingredients : []
+  const ingredients = Array.isArray(body?.ingredients)
+    ? body.ingredients.filter((item: unknown) => typeof item === "string")
+    : []
+
+  if (ingredients.length === 0) {
+    return c.json({ error: "Ingredients are required" }, 400)
+  }
 
   console.log("Generating recipes for ingredients", ingredients)
 
-  await delay(1200)
+  try {
+    const result = await generateText({
+      model: openai("gpt-5-mini"),
+      output: Output.object({ schema: recipesResponseSchema }),
+      prompt: `${RECIPE_PROMPT}\n\nIngredients in the fridge:\n${ingredients.map((item: string) => `- ${item}`).join("\n")}`,
+    })
 
-  const recipes = recipesResponseSchema.parse(getPlaceholderRecipes())
-  return c.json(recipes)
+    if (!result.output) {
+      console.error("OpenAI recipe generation returned no output")
+      return c.json({ error: "Could not generate recipes" }, 502)
+    }
+
+    const recipes = recipesResponseSchema.parse(result.output)
+    console.log("OpenAI recipes", recipes.recipes.map((recipe) => recipe.title))
+    console.log("OpenAI usage", result.usage)
+    return c.json(recipes)
+  } catch (error) {
+    console.error("OpenAI recipe generation failed", error)
+    return c.json({ error: "Could not generate recipes" }, 502)
+  }
 })
 
 serve({

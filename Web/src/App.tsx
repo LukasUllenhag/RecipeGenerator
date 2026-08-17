@@ -1,7 +1,12 @@
+import { useState } from 'react'
 import { FridgeSidebar } from './components/FridgeSidebar/FridgeSidebar'
 import { RecipeList } from './components/RecipeList/RecipeList'
-import { analyzeFridge, generateRecipes, type AnalysisMode } from './api/analyzeFridge'
-import { useState } from 'react'
+import {
+  analyzeFridge,
+  generateRecipes,
+  type AnalysisMode,
+  type Recipe,
+} from './api/analyzeFridge'
 import './App.css'
 
 const MODE_STORAGE_KEY = 'fridge-analysis-mode'
@@ -16,7 +21,7 @@ function readStoredMode(): AnalysisMode {
 
 function App() {
   const [ingredients, setIngredients] = useState<string[]>([])
-  const [recipes, setRecipes] = useState<{ title: string; description: string }[]>([])
+  const [recipes, setRecipes] = useState<Recipe[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)

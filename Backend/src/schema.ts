@@ -1,8 +1,12 @@
 import { z } from "zod"
 
 export const recipeSchema = z.object({
-  title: z.string(),
-  description: z.string(),
+  title: z.string().describe("Short recipe name"),
+  description: z.string().describe("One or two sentences about the dish"),
+  cookTime: z.string().describe('Total time to cook, for example "25 min"'),
+  steps: z
+    .array(z.string())
+    .describe("Cooking procedure, one clear step per item"),
 })
 
 export const fridgeAnalysisSchema = z.object({

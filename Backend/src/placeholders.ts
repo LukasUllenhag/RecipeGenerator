@@ -1,4 +1,4 @@
-import type { FridgeAnalysis, RecipesResponse } from "./schema"
+import type { FridgeAnalysis } from "./schema"
 
 export const SAMPLE_FRIDGE_INGREDIENTS: FridgeAnalysis["ingredients"] = [
   "2 cartons yoghurt naturell",
@@ -40,58 +40,4 @@ export const SAMPLE_FRIDGE_INGREDIENTS: FridgeAnalysis["ingredients"] = [
 
 export function getSampleFridgeAnalysis(): FridgeAnalysis {
   return { ingredients: SAMPLE_FRIDGE_INGREDIENTS }
-}
-
-const RECIPE_POOL: RecipesResponse["recipes"] = [
-  {
-    title: "Tomato Egg Stir-Fry",
-    description: "Soft scrambled eggs with ripe tomatoes, garlic, and a splash of soy sauce.",
-  },
-  {
-    title: "Cheesy Spinach Omelette",
-    description: "A folded omelette filled with wilted spinach, cheese, and a little cream.",
-  },
-  {
-    title: "Lemon Herb Chicken",
-    description: "Pan-seared chicken breast with lemon, garlic, and olive oil.",
-  },
-  {
-    title: "Roasted Carrot Salad",
-    description: "Warm roasted carrots over lettuce with yogurt, honey, and basil.",
-  },
-  {
-    title: "Mushroom Pasta",
-    description: "Simple pasta tossed with mushrooms, garlic, parmesan, and butter.",
-  },
-  {
-    title: "Avocado Rice Bowl",
-    description: "Rice topped with avocado, cucumber, soy sauce, and a soft egg.",
-  },
-  {
-    title: "Broccoli Beef Skillet",
-    description: "Ground beef cooked with broccoli, onions, ginger, and soy sauce.",
-  },
-  {
-    title: "Potato Frittata",
-    description: "Baked eggs with potatoes, cheese, and bell peppers.",
-  },
-]
-
-function pickRandom<T>(items: T[], count: number): T[] {
-  const pool = [...items]
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[pool[i], pool[j]] = [pool[j], pool[i]]
-  }
-  return pool.slice(0, Math.min(count, pool.length))
-}
-
-export function getPlaceholderRecipes(): RecipesResponse {
-  return {
-    recipes: pickRandom(RECIPE_POOL, 4),
-  }
-}
-
-export function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
