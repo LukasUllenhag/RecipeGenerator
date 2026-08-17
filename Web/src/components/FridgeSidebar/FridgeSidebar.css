@@ -299,15 +299,23 @@
 .fridge-ingredient-list {
   list-style: none;
   margin: 0;
-  padding: 0.2rem 0;
+  padding: 0.65rem 0.35rem;
   width: 100%;
   overflow-y: auto;
-  background: rgba(255, 254, 249, 0.82);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: var(--surface);
+  border: none;
+  border-radius: 12px;
   line-height: 1.3;
   scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-color: var(--border-strong) var(--surface);
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 4px, #000 calc(100% - 4px), transparent),
+    linear-gradient(to bottom, transparent, #000 4px, #000 calc(100% - 4px), transparent);
+  mask-image:
+    linear-gradient(to right, transparent, #000 4px, #000 calc(100% - 4px), transparent),
+    linear-gradient(to bottom, transparent, #000 4px, #000 calc(100% - 4px), transparent);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 .fridge-ingredient-list::-webkit-scrollbar {
