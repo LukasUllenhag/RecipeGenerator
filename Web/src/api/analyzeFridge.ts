@@ -37,11 +37,14 @@ export async function analyzeFridge(
   return (await response.json()) as FridgeAnalysis
 }
 
-export async function generateRecipes(ingredients: string[]): Promise<RecipesResponse> {
+export async function generateRecipes(
+  ingredients: string[],
+  mode: AnalysisMode,
+): Promise<RecipesResponse> {
   const response = await fetch('/api/recipes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ingredients }),
+    body: JSON.stringify({ ingredients, mode }),
   })
 
   if (!response.ok) {

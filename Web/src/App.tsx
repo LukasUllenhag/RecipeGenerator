@@ -62,7 +62,7 @@ function App() {
     setRecipes([])
 
     try {
-      const result = await generateRecipes(ingredients)
+      const result = await generateRecipes(ingredients, mode)
       setRecipes(result.recipes)
     } catch {
       setError('Could not generate recipes. Is the backend running?')

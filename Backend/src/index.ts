@@ -4,7 +4,7 @@ import { serve } from "@hono/node-server"
 import { generateText, Output } from "ai"
 import { openai } from "@ai-sdk/openai"
 import { fridgeAnalysisSchema, recipesResponseSchema } from "./schema"
-import { getSampleFridgeAnalysis } from "./placeholders"
+import { getSampleFridgeAnalysis, getSampleRecipes } from "./placeholders"
 
 const VISION_PROMPT = `Look at this fridge photo.
 Return every visible food item or ingredient as its own string.
@@ -29,9 +29,6 @@ app.use(
   }),
 )
 
-app.get("/api/hello", (c) => {
-  return c.json({ message: "Hello from the Recipe Generator backend" })
-})
 
 app.post("/api/fridge", async (c) => {
   const formData = await c.req.formData()
@@ -94,9 +91,15 @@ app.post("/api/recipes", async (c) => {
   const ingredients = Array.isArray(body?.ingredients)
     ? body.ingredients.filter((item: unknown) => typeof item === "string")
     : []
+  const useMock = body?.mode !== "live"
 
   if (ingredients.length === 0) {
     return c.json({ error: "Ingredients are required" }, 400)
+  }
+
+  if (useMock) {
+    console.log("Using sample recipes (mock mode)")
+    return c.json(getSampleRecipes())
   }
 
   console.log("Generating recipes for ingredients", ingredients)
@@ -114,7 +117,9 @@ app.post("/api/recipes", async (c) => {
     }
 
     const recipes = recipesResponseSchema.parse(result.output)
-    console.log("OpenAI recipes", recipes.recipes.map((recipe) => recipe.title))
+    console.log("OpenAI recipes",recipes)
+    console.log("OpenAI steps", recipes.recipes.map((recipe) => recipe.steps))
+    //console.log("OpenAI recipes", recipes.recipes.map((recipe) => recipe.title))
     console.log("OpenAI usage", result.usage)
     return c.json(recipes)
   } catch (error) {
