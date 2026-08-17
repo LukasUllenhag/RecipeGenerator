@@ -151,35 +151,6 @@
   width: 100%;
 }
 
-.add-ingredient {
-  display: flex;
-  flex: 1 1 100%;
-  gap: 0.5rem;
-  min-width: 0;
-}
-
-.add-ingredient__input {
-  flex: 1;
-  min-width: 0;
-  padding: 0.625rem 0.75rem;
-  border: 1.5px solid var(--border-strong);
-  border-radius: 10px;
-  background: var(--surface);
-  font-family: inherit;
-  font-size: 0.875rem;
-  color: var(--text-h);
-}
-
-.add-ingredient__input::placeholder {
-  color: var(--text-muted);
-}
-
-.add-ingredient__input:focus {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-  border-color: var(--primary);
-}
-
 /* Upload */
 
 .fridge-upload {
@@ -445,6 +416,39 @@
 
 .fridge-ingredient-item:last-child {
   border-bottom: none;
+}
+
+.fridge-ingredient-item--composer {
+  cursor: text;
+}
+
+.fridge-ingredient-add {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 0.65rem;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--primary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fridge-ingredient-add:hover:not(:disabled),
+.fridge-ingredient-add:focus-visible {
+  background: var(--primary-bg);
+}
+
+.fridge-ingredient-add:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+.fridge-ingredient-add:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 @media (max-width: 768px) {

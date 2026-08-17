@@ -36,41 +36,19 @@ export function FridgeSidebar({
   onGenerateRecipes,
   onReset,
 }: FridgeSidebarProps) {
-  const [isAdding, setIsAdding] = useState(false)
-  const [draft, setDraft] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const previousCount = useRef(0)
+  const [isComposing, setIsComposing] = useState(false)
   const ingredientCount = ingredients.length
   const hasIngredients = ingredientCount > 0
   const isBusy = isAnalyzing || isGenerating
 
   useEffect(() => {
-    if (isAdding) {
-      inputRef.current?.focus()
-    }
-  }, [isAdding])
-
-  useEffect(() => {
-    if (isAdding) {
+    if (ingredientCount === previousCount.current + 1 || isComposing) {
       listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
     }
-  }, [ingredientCount, isAdding])
-
-  function handleAddSubmit(event: React.FormEvent) {
-    event.preventDefault()
-    const nextIngredient = draft.trim()
-    if (!nextIngredient) {
-      return
-    }
-    onAddIngredient(nextIngredient)
-    setDraft('')
-    inputRef.current?.focus()
-  }
-
-  function handleCancelAdd() {
-    setIsAdding(false)
-    setDraft('')
-  }
+    previousCount.current = ingredientCount
+  }, [ingredientCount, isComposing])
 
   return (
     <section className="fridge-panel" aria-label="Your fridge">
@@ -94,6 +72,29 @@ export function FridgeSidebar({
                 onSave={(next) => onUpdateIngredient(index, next)}
               />
             ))}
+            {isComposing ? (
+              <IngredientItem
+                name=""
+                isComposer
+                disabled={isBusy}
+                onSave={(next) => {
+                  onAddIngredient(next)
+                  setIsComposing(false)
+                }}
+                onCancel={() => setIsComposing(false)}
+              />
+            ) : (
+              <li>
+                <button
+                  type="button"
+                  className="fridge-ingredient-add"
+                  disabled={isBusy}
+                  onClick={() => setIsComposing(true)}
+                >
+                  + Add ingredient
+                </button>
+              </li>
+            )}
           </ul>
         ) : mode === 'live' ? (
           <FridgeUpload onFileSelected={onFileSelected} />
@@ -119,35 +120,6 @@ export function FridgeSidebar({
       )}
 
       <div className="fridge-panel__actions">
-        {isAdding ? (
-          <form className="add-ingredient" onSubmit={handleAddSubmit}>
-            <input
-              ref={inputRef}
-              className="add-ingredient__input"
-              type="text"
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="e.g. 2 tomatoes"
-              aria-label="New ingredient"
-              disabled={isBusy}
-            />
-            <button type="submit" className="btn btn--add" disabled={isBusy || !draft.trim()}>
-              Add
-            </button>
-            <button type="button" className="btn btn--generate" onClick={handleCancelAdd} disabled={isBusy}>
-              Cancel
-            </button>
-          </form>
-        ) : (
-          <button
-            type="button"
-            className="btn btn--add"
-            disabled={isBusy}
-            onClick={() => setIsAdding(true)}
-          >
-            + Add ingredient
-          </button>
-        )}
         <button
           type="button"
           className="btn btn--generate"

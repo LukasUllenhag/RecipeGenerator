@@ -3,12 +3,20 @@ import './FridgeSidebar.css'
 
 type IngredientItemProps = {
   name: string
+  isComposer?: boolean
   disabled?: boolean
   onSave: (next: string) => void
+  onCancel?: () => void
 }
 
-export function IngredientItem({ name, disabled, onSave }: IngredientItemProps) {
-  const [isEditing, setIsEditing] = useState(false)
+export function IngredientItem({
+  name,
+  isComposer,
+  disabled,
+  onSave,
+  onCancel,
+}: IngredientItemProps) {
+  const [isEditing, setIsEditing] = useState(Boolean(isComposer))
   const [draft, setDraft] = useState(name)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -21,9 +29,11 @@ export function IngredientItem({ name, disabled, onSave }: IngredientItemProps) 
   useEffect(() => {
     if (isEditing) {
       inputRef.current?.focus()
-      inputRef.current?.select()
+      if (!isComposer) {
+        inputRef.current?.select()
+      }
     }
-  }, [isEditing])
+  }, [isEditing, isComposer])
 
   function startEditing() {
     if (disabled) {
@@ -33,13 +43,24 @@ export function IngredientItem({ name, disabled, onSave }: IngredientItemProps) 
     setIsEditing(true)
   }
 
+  function cancel() {
+    setDraft(name)
+    setIsEditing(false)
+    onCancel?.()
+  }
+
   function commit() {
     const next = draft.trim()
     if (next && next !== name) {
       onSave(next)
-    } else {
-      setDraft(name)
+      setIsEditing(false)
+      return
     }
+    if (isComposer) {
+      cancel()
+      return
+    }
+    setDraft(name)
     setIsEditing(false)
   }
 
@@ -50,20 +71,28 @@ export function IngredientItem({ name, disabled, onSave }: IngredientItemProps) 
     }
     if (event.key === 'Escape') {
       event.preventDefault()
-      setDraft(name)
-      setIsEditing(false)
+      cancel()
     }
   }
 
+  const className = [
+    'fridge-ingredient-item',
+    isEditing ? 'fridge-ingredient-item--editing' : '',
+    isComposer ? 'fridge-ingredient-item--composer' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <li className={`fridge-ingredient-item${isEditing ? ' fridge-ingredient-item--editing' : ''}`}>
+    <li className={className}>
       {isEditing ? (
         <input
           ref={inputRef}
           className="fridge-ingredient-item__input"
           type="text"
           value={draft}
-          aria-label="Edit ingredient"
+          aria-label={isComposer ? 'Add ingredient' : 'Edit ingredient'}
+          placeholder={isComposer ? 'Add ingredient…' : undefined}
           onChange={(event) => setDraft(event.target.value)}
           onBlur={commit}
           onKeyDown={handleKeyDown}
