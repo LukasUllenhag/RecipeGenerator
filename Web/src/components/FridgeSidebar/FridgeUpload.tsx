@@ -57,10 +57,19 @@ export function FridgeUpload({ onFileSelected }: FridgeUploadProps) {
       />
 
       <div className="fridge-upload__icon" aria-hidden="true">
-        <svg viewBox="0 0 48 48" fill="none">
-          <rect x="8" y="6" width="32" height="36" rx="4" stroke="currentColor" strokeWidth="2" />
-          <circle cx="24" cy="22" r="6" stroke="currentColor" strokeWidth="2" />
-          <path d="M16 36h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <svg viewBox="0 0 100 78" fill="none">
+          <rect x="18" y="12" width="11" height="8" rx="2" fill="#1a1a1a" />
+          <path d="M38 22 42.5 8h15L62 22H38Z" fill="#1a1a1a" />
+          <rect x="45" y="11" width="10" height="5" rx="1.2" fill="#fff" />
+          <rect x="8" y="22" width="84" height="50" rx="7" fill="#1a1a1a" />
+          <path d="M14 30h72M14 64h72" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
+          <circle cx="20" cy="37" r="1.35" fill="#fff" />
+          <circle cx="26.5" cy="37" r="1.35" fill="#fff" />
+          <rect x="72" y="43" width="11" height="3.6" rx="1.2" fill="#fff" />
+          <circle cx="50" cy="47" r="16" fill="#1a1a1a" />
+          <circle cx="50" cy="47" r="12.5" fill="#1a1a1a" stroke="#fff" strokeWidth="2.2" />
+          <circle cx="45.5" cy="43" r="2.15" fill="#fff" />
+          <circle cx="54.5" cy="51.5" r="1.1" fill="#fff" />
         </svg>
       </div>
 
