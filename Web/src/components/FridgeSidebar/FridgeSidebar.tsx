@@ -18,6 +18,7 @@ type FridgeSidebarProps = {
   onLoadSample: () => void
   onAddIngredient: (ingredient: string) => void
   onUpdateIngredient: (index: number, ingredient: string) => void
+  onRemoveIngredient: (index: number) => void
   onGenerateRecipes: () => void
   onReset: () => void
 }
@@ -33,6 +34,7 @@ export function FridgeSidebar({
   onLoadSample,
   onAddIngredient,
   onUpdateIngredient,
+  onRemoveIngredient,
   onGenerateRecipes,
   onReset,
 }: FridgeSidebarProps) {
@@ -70,6 +72,7 @@ export function FridgeSidebar({
                 name={name}
                 disabled={isBusy}
                 onSave={(next) => onUpdateIngredient(index, next)}
+                onRemove={() => onRemoveIngredient(index)}
               />
             ))}
             {isComposing ? (
