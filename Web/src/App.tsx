@@ -83,6 +83,10 @@ function App() {
     )
   }
 
+  function handleRemoveIngredient(index: number) {
+    setIngredients((current) => current.filter((_, itemIndex) => itemIndex !== index))
+  }
+
   function handleReset() {
     setIngredients([])
     setRecipes([])
@@ -106,6 +110,7 @@ function App() {
         onLoadSample={() => loadFridge('mock')}
         onAddIngredient={handleAddIngredient}
         onUpdateIngredient={handleUpdateIngredient}
+        onRemoveIngredient={handleRemoveIngredient}
         onGenerateRecipes={handleGenerateRecipes}
         onReset={handleReset}
       />

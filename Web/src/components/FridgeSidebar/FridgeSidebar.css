@@ -328,10 +328,10 @@
 }
 
 .fridge-ingredient-item {
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 0.35rem;
-  padding: 0.4rem 0.45rem 0.4rem 0.65rem;
+  padding: 0.4rem 0.65rem;
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--text-h);
@@ -341,6 +341,13 @@
 .fridge-ingredient-item:hover,
 .fridge-ingredient-item:focus-within {
   background: var(--primary-bg);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.fridge-ingredient-item--editing:hover,
+.fridge-ingredient-item--editing:focus-within {
+  padding: 0.4rem 0.45rem 0.4rem 0.65rem;
 }
 
 .fridge-ingredient-item__label {
@@ -357,40 +364,50 @@
   overflow: visible;
 }
 
-.fridge-ingredient-item__edit {
-  flex-shrink: 0;
+.fridge-ingredient-item__action {
+  position: absolute;
+  top: 0.3rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
-  margin-top: -0.1rem;
   padding: 0;
   border: none;
   border-radius: 6px;
   background: transparent;
   color: var(--text-muted);
   opacity: 0;
+  pointer-events: none;
   cursor: pointer;
 }
 
-.fridge-ingredient-item:hover .fridge-ingredient-item__edit,
-.fridge-ingredient-item:focus-within .fridge-ingredient-item__edit {
-  opacity: 1;
+.fridge-ingredient-item__action--remove {
+  left: 0.25rem;
 }
 
-.fridge-ingredient-item__edit:hover,
-.fridge-ingredient-item__edit:focus-visible {
+.fridge-ingredient-item__action--edit {
+  right: 0.25rem;
+}
+
+.fridge-ingredient-item:hover .fridge-ingredient-item__action,
+.fridge-ingredient-item:focus-within .fridge-ingredient-item__action {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fridge-ingredient-item__action:hover,
+.fridge-ingredient-item__action:focus-visible {
   color: var(--primary);
   background: var(--primary-bg-hover);
 }
 
-.fridge-ingredient-item__edit:focus-visible {
+.fridge-ingredient-item__action:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 1px;
 }
 
-.fridge-ingredient-item__edit svg {
+.fridge-ingredient-item__action svg {
   width: 0.9rem;
   height: 0.9rem;
 }

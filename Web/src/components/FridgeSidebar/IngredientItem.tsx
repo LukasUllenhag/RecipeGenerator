@@ -7,6 +7,7 @@ type IngredientItemProps = {
   disabled?: boolean
   onSave: (next: string) => void
   onCancel?: () => void
+  onRemove?: () => void
 }
 
 export function IngredientItem({
@@ -15,6 +16,7 @@ export function IngredientItem({
   disabled,
   onSave,
   onCancel,
+  onRemove,
 }: IngredientItemProps) {
   const [isEditing, setIsEditing] = useState(Boolean(isComposer))
   const [draft, setDraft] = useState(name)
@@ -99,10 +101,28 @@ export function IngredientItem({
         />
       ) : (
         <>
+          {onRemove && (
+            <button
+              type="button"
+              className="fridge-ingredient-item__action fridge-ingredient-item__action--remove"
+              aria-label={`Remove ${name}`}
+              disabled={disabled}
+              onClick={onRemove}
+            >
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M5 5 15 15M15 5 5 15"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          )}
           <span className="fridge-ingredient-item__label">{name}</span>
           <button
             type="button"
-            className="fridge-ingredient-item__edit"
+            className="fridge-ingredient-item__action fridge-ingredient-item__action--edit"
             aria-label={`Edit ${name}`}
             disabled={disabled}
             onClick={startEditing}
