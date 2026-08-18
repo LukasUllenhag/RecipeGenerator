@@ -128,9 +128,13 @@ app.post("/api/recipes", async (c) => {
   }
 })
 
-serve({
-  fetch: app.fetch,
-  port: 3000,
-})
+export default app;
 
-console.log("Backend listening on http://localhost:3000")
+if (!process.env.VERCEL) {
+  serve({
+    fetch: app.fetch,
+    port: 3000,
+  });
+
+  console.log("Backend listening on http://localhost:3000");
+}

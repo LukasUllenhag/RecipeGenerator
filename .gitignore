@@ -7,10 +7,14 @@ dist/
 # Vite
 .vite/
 
+# Vercel
+.vercel/
+
 # Environment variables
 .env
 .env.*
 !.env.example
+.env.local
 
 # Logs
 *.log
