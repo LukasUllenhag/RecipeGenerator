@@ -2,9 +2,10 @@ import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { serve } from "@hono/node-server"
 import { generateText, Output } from "ai"
-import { openai } from "@ai-sdk/openai"
 import { fridgeAnalysisSchema, recipesResponseSchema } from "./schema"
 import { getSampleFridgeAnalysis, getSampleRecipes } from "./placeholders"
+
+const MODEL = "openai/gpt-5-mini"
 
 const VISION_PROMPT = `Look at this fridge photo.
 Return every visible food item or ingredient as its own string.
@@ -54,7 +55,7 @@ app.post("/api/fridge", async (c) => {
 
   try {
     const result = await generateText({
-      model: openai("gpt-5-mini"),
+      model: MODEL,
       output: Output.object({ schema: fridgeAnalysisSchema }),
       messages: [
         {
@@ -72,16 +73,16 @@ app.post("/api/fridge", async (c) => {
     })
 
     if (!result.output) {
-      console.error("OpenAI fridge vision returned no output")
+      console.error("AI Gateway fridge vision returned no output")
       return c.json({ error: "Could not detect ingredients" }, 502)
     }
 
     const analysis = fridgeAnalysisSchema.parse(result.output)
-    console.log("OpenAI fridge ingredients", analysis.ingredients)
-    console.log("OpenAI usage", result.usage)
+    console.log("AI Gateway fridge ingredients", analysis.ingredients)
+    console.log("AI Gateway usage", result.usage)
     return c.json(analysis)
   } catch (error) {
-    console.error("OpenAI fridge vision failed", error)
+    console.error("AI Gateway fridge vision failed", error)
     return c.json({ error: "Could not analyze the fridge photo" }, 502)
   }
 })
@@ -106,24 +107,23 @@ app.post("/api/recipes", async (c) => {
 
   try {
     const result = await generateText({
-      model: openai("gpt-5-mini"),
+      model: MODEL,
       output: Output.object({ schema: recipesResponseSchema }),
       prompt: `${RECIPE_PROMPT}\n\nIngredients in the fridge:\n${ingredients.map((item: string) => `- ${item}`).join("\n")}`,
     })
 
     if (!result.output) {
-      console.error("OpenAI recipe generation returned no output")
+      console.error("AI Gateway recipe generation returned no output")
       return c.json({ error: "Could not generate recipes" }, 502)
     }
 
     const recipes = recipesResponseSchema.parse(result.output)
-    console.log("OpenAI recipes",recipes)
-    console.log("OpenAI steps", recipes.recipes.map((recipe) => recipe.steps))
-    //console.log("OpenAI recipes", recipes.recipes.map((recipe) => recipe.title))
-    console.log("OpenAI usage", result.usage)
+    console.log("AI Gateway recipes", recipes)
+    console.log("AI Gateway steps", recipes.recipes.map((recipe) => recipe.steps))
+    console.log("AI Gateway usage", result.usage)
     return c.json(recipes)
   } catch (error) {
-    console.error("OpenAI recipe generation failed", error)
+    console.error("AI Gateway recipe generation failed", error)
     return c.json({ error: "Could not generate recipes" }, 502)
   }
 })
