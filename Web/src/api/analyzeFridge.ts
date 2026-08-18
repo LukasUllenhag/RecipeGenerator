@@ -1,3 +1,5 @@
+import { compressImage } from './compressImage'
+
 export type Recipe = {
   title: string
   description: string
@@ -22,7 +24,7 @@ export async function analyzeFridge(
   const body = new FormData()
   body.append('mode', mode)
   if (image) {
-    body.append('image', image)
+    body.append('image', await compressImage(image))
   }
 
   const response = await fetch('/api/fridge', {
@@ -31,6 +33,11 @@ export async function analyzeFridge(
   })
 
   if (!response.ok) {
+    if (response.status === 413 || response.status === 503) {
+      throw new Error(
+        'The fridge photo is too large for the API. Try a smaller image.',
+      )
+    }
     throw new Error(`Fridge analysis failed (${response.status})`)
   }
 
