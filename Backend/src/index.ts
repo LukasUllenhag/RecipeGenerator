@@ -2,8 +2,8 @@ import { Hono } from "hono"
 import { cors } from "hono/cors"
 import { serve } from "@hono/node-server"
 import { generateText, Output } from "ai"
-import { fridgeAnalysisSchema, recipesResponseSchema } from "./schema"
-import { getSampleFridgeAnalysis, getSampleRecipes } from "./placeholders"
+import { fridgeAnalysisSchema, recipesResponseSchema } from "./schema.js"
+import { getSampleFridgeAnalysis, getSampleRecipes } from "./placeholders.js"
 
 const MODEL = "openai/gpt-5-mini"
 

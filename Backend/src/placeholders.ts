@@ -1,4 +1,4 @@
-import type { FridgeAnalysis, RecipesResponse } from "./schema"
+import type { FridgeAnalysis, RecipesResponse } from "./schema.js"
 
 export const SAMPLE_FRIDGE_INGREDIENTS: FridgeAnalysis["ingredients"] = [
   "2 cartons yoghurt naturell",
