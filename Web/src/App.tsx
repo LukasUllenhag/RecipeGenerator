@@ -45,11 +45,13 @@ function App() {
     try {
       const analysis = await analyzeFridge(nextMode, image)
       setIngredients(analysis.ingredients)
-    } catch {
+    } catch (caught) {
       setError(
-        nextMode === 'live'
-          ? 'Could not analyze the fridge photo. Is the backend running?'
-          : 'Could not load the sample fridge. Is the backend running?',
+        caught instanceof Error
+          ? caught.message
+          : nextMode === 'live'
+            ? 'Could not analyze the fridge photo. Is the backend running?'
+            : 'Could not load the sample fridge. Is the backend running?',
       )
     } finally {
       setIsAnalyzing(false)
