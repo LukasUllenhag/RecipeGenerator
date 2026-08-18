@@ -13,9 +13,9 @@ const MODE_STORAGE_KEY = 'fridge-analysis-mode'
 
 function readStoredMode(): AnalysisMode {
   try {
-    return localStorage.getItem(MODE_STORAGE_KEY) === 'live' ? 'live' : 'mock'
+    return localStorage.getItem(MODE_STORAGE_KEY) === 'mock' ? 'mock' : 'live'
   } catch {
-    return 'mock'
+    return 'live'
   }
 }
 
