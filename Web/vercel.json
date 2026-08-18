@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://recipe-generator-jr3jwplv0-personal-77a5.vercel.app/api/:path*"
+      "destination": "https://recipe-generator-api-six.vercel.app/api/:path*"
     }
   ]
 }
