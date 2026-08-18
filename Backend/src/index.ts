@@ -22,11 +22,26 @@ Do not invent large missing ingredients that are not in the fridge.`
 
 const app = new Hono()
 
+function isAllowedOrigin(origin: string) {
+  if (origin.startsWith("http://localhost:")) {
+    return true
+  }
+
+  if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+    return true
+  }
+
+  try {
+    return new URL(origin).hostname.endsWith(".vercel.app")
+  } catch {
+    return false
+  }
+}
+
 app.use(
   "*",
   cors({
-    origin: (origin) =>
-      origin.startsWith("http://localhost:") ? origin : "http://localhost:5173",
+    origin: (origin) => (origin && isAllowedOrigin(origin) ? origin : ""),
   }),
 )
 
