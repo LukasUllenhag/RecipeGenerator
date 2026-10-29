@@ -22,20 +22,19 @@ Do not invent large missing ingredients that are not in the fridge.`
 
 const app = new Hono()
 
+const ALLOWED_ORIGINS = new Set(
+  [
+    process.env.FRONTEND_URL,
+    "https://recipe-generator-web.vercel.app",
+  ].filter((origin): origin is string => Boolean(origin)),
+)
+
 function isAllowedOrigin(origin: string) {
   if (origin.startsWith("http://localhost:")) {
     return true
   }
 
-  if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
-    return true
-  }
-
-  try {
-    return new URL(origin).hostname.endsWith(".vercel.app")
-  } catch {
-    return false
-  }
+  return ALLOWED_ORIGINS.has(origin)
 }
 
 app.use(
@@ -52,7 +51,6 @@ app.post("/api/fridge", async (c) => {
   const useMock = mode !== "live"
 
   if (useMock) {
-    console.log("Using sample fridge ingredients (mock mode)")
     return c.json(getSampleFridgeAnalysis())
   }
 
@@ -61,12 +59,6 @@ app.post("/api/fridge", async (c) => {
   if (!image || typeof image === "string") {
     return c.json({ error: "An image file is required" }, 400)
   }
-
-  console.log("Received fridge image", {
-    name: image.name,
-    type: image.type,
-    size: image.size,
-  })
 
   try {
     const result = await generateText({
@@ -92,10 +84,7 @@ app.post("/api/fridge", async (c) => {
       return c.json({ error: "Could not detect ingredients" }, 502)
     }
 
-    const analysis = fridgeAnalysisSchema.parse(result.output)
-    console.log("AI Gateway fridge ingredients", analysis.ingredients)
-    console.log("AI Gateway usage", result.usage)
-    return c.json(analysis)
+    return c.json(fridgeAnalysisSchema.parse(result.output))
   } catch (error) {
     console.error("AI Gateway fridge vision failed", error)
     return c.json({ error: "Could not analyze the fridge photo" }, 502)
@@ -114,11 +103,8 @@ app.post("/api/recipes", async (c) => {
   }
 
   if (useMock) {
-    console.log("Using sample recipes (mock mode)")
     return c.json(getSampleRecipes())
   }
-
-  console.log("Generating recipes for ingredients", ingredients)
 
   try {
     const result = await generateText({
@@ -132,11 +118,7 @@ app.post("/api/recipes", async (c) => {
       return c.json({ error: "Could not generate recipes" }, 502)
     }
 
-    const recipes = recipesResponseSchema.parse(result.output)
-    console.log("AI Gateway recipes", recipes)
-    console.log("AI Gateway steps", recipes.recipes.map((recipe) => recipe.steps))
-    console.log("AI Gateway usage", result.usage)
-    return c.json(recipes)
+    return c.json(recipesResponseSchema.parse(result.output))
   } catch (error) {
     console.error("AI Gateway recipe generation failed", error)
     return c.json({ error: "Could not generate recipes" }, 502)

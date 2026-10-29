@@ -1,14 +1,14 @@
 {
-  "name": "Backend",
+  "name": "recipe-generator-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Hono API for fridge image analysis and recipe generation",
   "main": "index.js",
   "scripts": {
     "dev": "node --watch --env-file=.env --import=tsx src/index.ts"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
